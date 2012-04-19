@@ -1,0 +1,2 @@
+A simple script to allow you to ssh to multiple servers at once.
+Commands are ran in parallel and fed back to you sorted by hostname.
