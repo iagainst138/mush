@@ -11,7 +11,7 @@ import string
 from optparse import OptionParser
 
 padding = 0
-do_break = True
+do_break = False
 prompt = '___::'
 
 class ssh_connection(threading.Thread):
@@ -138,13 +138,25 @@ if __name__ == '__main__':
 			print 'unknown shell command: ' + shell_cmd
 		return ''
 	
+	def terminate():
+		for t in threads.values():
+			t.alive = False
+			t._Thread__stop()
+		print ''
+	
 	show_output = True
 	def wait(show_output):
 		for t in threads.values():
-			while t.ready and t.alive:
-				if t.failed:
-					break
-				time.sleep(0.1)
+			try:
+				while t.ready and t.alive:
+					if t.failed:
+						break
+					if not t.alive:
+						break
+					time.sleep(0.1)
+			except KeyboardInterrupt:
+				terminate()
+				sys.exit()
 		if show_output:
 			hosts = sorted(threads.keys())
 			if options.keep_sorted:
@@ -172,6 +184,7 @@ if __name__ == '__main__':
 	for ip in open(options.file).readlines():
 		if ip[0] == '#':continue
 		ip = ip.strip()
+		if ip == '':continue
 		if len(ip) > padding:padding = len(ip)
 		
 		# HANDLING NEWLINES IN PRINT INSTEAD
@@ -198,7 +211,12 @@ if __name__ == '__main__':
 				cmd = shell(cmd[1:])
 				if cmd == '':
 					continue
-		except EOFError: cmd = '#'
+		except EOFError:
+			cmd = '#'
+			print ''
+		except KeyboardInterrupt:
+			terminate()
+			break
 		for t in threads.values():
 			if cmd == '#':cmd = 'exit'
 			if cmd == 'exit':show_output = False
