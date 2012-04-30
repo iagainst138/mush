@@ -19,5 +19,5 @@ Options:
 	  the first word on the line is taken as the alias and the rest of the line 
 	  is taken as the command aliases can be ran by prefixing them with a # 
 	  
-Fixes in v0.3
+Fixes in v0.4
 Fixed an issue where on Ret Hat 6.2 a depreciation warning was being issued

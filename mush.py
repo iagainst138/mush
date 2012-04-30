@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+import warnings
+warnings.simplefilter('ignore', DeprecationWarning)
+
 import paramiko
 import getpass
 import threading
