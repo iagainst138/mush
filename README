@@ -6,13 +6,18 @@ Specify this file with the -f option.
 mush will ssh to each of these machines and run commands you enter at the prompt in parallel
 
 Options:
--S keeps the list sorted as in the hosts file specified with -f
--c specifies the original command to run
--n will place a newline between each set of hosts results (can be toggled at the prompt with #n)
--u set the username for the connection
--p will prompt you for a password (will use the same password for each connection, shared keys recommended)
--s run a single command and quit
--a specify an "alias" file
+-S 	keeps the list sorted as in the hosts file specified with -f
+-c 	specifies the original command to run
+-n 	will place a newline between each set of hosts results (can be 
+	toggled at the prompt with #n)
+-u 	set the username for the connection
+-p 	will prompt you for a password (will use the same password for each connection,
+	shared keys recommended)
+-s 	run a single command and quit
+-a 	specify an "alias" file
 	- alias file is a plain text file containing a list alias's for commands
-	  the first word on the line is taken as the alias and the rest of the line is taken as the command
-	  aliases can be ran by prefixing them with a # 
+	  the first word on the line is taken as the alias and the rest of the line 
+	  is taken as the command aliases can be ran by prefixing them with a # 
+	  
+Fixes in v0.3
+Fixed an issue where on Ret Hat 6.2 a depreciation warning was being issued
