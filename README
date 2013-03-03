@@ -17,6 +17,10 @@ Options:
 -s 	run a single command and quit
 	  
 
+Changes in v0.6
+Removed global hosts variable.
+Threads now call host.exec_cmd as target instead of the ssh_f function.
+
 Fixes in v0.5
 Changed the way the threading was implemented (an improvement I hope!).
 Some options have been dropped during this "improvement".

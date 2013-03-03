@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# version 0.5
+# version 0.6
 
 import warnings
 warnings.simplefilter('ignore', DeprecationWarning)
@@ -14,11 +14,11 @@ import os
 import readline
 from optparse import OptionParser
 
-hosts = []
 prompt = '___::'
 padding = [0]
 
 def load_host_file(f, default_username, default_password):
+    hosts = []
     if not f:sys.exit('Please specify a hosts file to use.')
     if not os.path.exists(f):sys.exit(f + ' does not exist.')
     for line in open(f).readlines():
@@ -27,9 +27,7 @@ def load_host_file(f, default_username, default_password):
     for host in hosts:
         if len(host.host) > padding[0]:
             padding[0] = len(host.host)
-
-def ssh_f(host, cmd):
-    host.exec_cmd(cmd)
+    return hosts
 
 def format_host_output(host, data):
     r = ''
@@ -46,9 +44,12 @@ class ssh_connection:
         self.username = username
         self.port = '22'
         self.password = password
-        if self.host.find(' ') > 0:self.host, self.password = self.host.split(' ')
-        if self.host.find('@') > 0:self.username,self.host = self.host.split('@')
-        if self.host.find(':') > 0:self.host,self.port = self.host.split(':')
+        if self.host.find(' ') > 0:
+            self.host, self.password = self.host.split(' ')
+        if self.host.find('@') > 0:
+            self.username,self.host = self.host.split('@')
+        if self.host.find(':') > 0:
+            self.host,self.port = self.host.split(':')
         self.port = int(self.port)
         self.output = ''
         self.prompt_cmd = prompt_cmd
@@ -129,7 +130,7 @@ if __name__ == '__main__':
     default_username = getpass.getuser()
     if options.username:
         default_username = options.username
-    load_host_file(options.hosts_file, default_username, default_password)
+    hosts = load_host_file(options.hosts_file, default_username, default_password)
     
     first_run = True
     while True:
@@ -146,7 +147,7 @@ if __name__ == '__main__':
             threads = []
             try:
                 for host in hosts:
-                    t = threading.Thread(target=ssh_f, args=(host, cmd))
+                    t = threading.Thread(target=host.exec_cmd, args=(cmd,))
                     threads.append(t)
                     t.start()
                 for t in threads:t.join()
@@ -169,4 +170,5 @@ if __name__ == '__main__':
         options.command = None
         first_run = False
 
-    for host in hosts:host.close()
+    for host in hosts:
+        host.close()
