@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# version 0.6
+# version 0.7
 
 import warnings
 warnings.simplefilter('ignore', DeprecationWarning)
@@ -15,7 +15,6 @@ import readline
 from optparse import OptionParser
 
 prompt = '___::'
-padding = [0]
 
 def load_host_file(f, default_username, default_password):
     hosts = []
@@ -24,18 +23,15 @@ def load_host_file(f, default_username, default_password):
     for line in open(f).readlines():
         if line[0] == '#' or len(line) == 0:continue
         hosts.append(ssh_connection(line.strip(), username=default_username, password=default_password))
-    for host in hosts:
-        if len(host.host) > padding[0]:
-            padding[0] = len(host.host)
     return hosts
 
-def format_host_output(host, data):
+def format_host_output(host, data, padding):
     r = ''
     for line in data.strip().split('\r\n'):
         line = line.strip()
         if len(line) > 0:
-            r = r + '[' + host.rjust(padding[0]) + '] ' + line + '\n'
-    if r == '': r = r + '[' + host.rjust(padding[0]) + '] '
+            r = r + '[' + host.rjust(padding) + '] ' + line + '\n'
+    if r == '': r = r + '[' + host.rjust(padding) + '] '
     return r
 
 class ssh_connection:
@@ -132,6 +128,8 @@ if __name__ == '__main__':
         default_username = options.username
     hosts = load_host_file(options.hosts_file, default_username, default_password)
     
+    padding = max(len(h.host) for h in hosts)
+
     first_run = True
     while True:
         try:
@@ -153,7 +151,7 @@ if __name__ == '__main__':
                 for t in threads:t.join()
                 for host in sorted(hosts):
                     if host.connected:
-                        print format_host_output(host.host, host.output)
+                        print format_host_output(host.host, host.output, padding)
                     else:
                         hosts.remove(host)
             except KeyboardInterrupt:
